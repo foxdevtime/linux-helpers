@@ -23,9 +23,9 @@ check_root() {
 
 get_latest_url() {
     curl -s https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest | \
-    grep "browser_download_url.*linux-x64.AppImage\"" | \
-    cut -d : -f 2,3 | \
-    tr -d \"
+    grep "browser_download_url.*linux-x64.AppImage" | \
+    head -n 1 | \
+    sed -E 's/.*"browser_download_url": "([^"]+)".*/\1/'
 }
 
 install_nekoray() {
