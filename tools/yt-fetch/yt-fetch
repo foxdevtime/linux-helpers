@@ -1,0 +1,96 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+if ! command -v yt-dlp &> /dev/null; then
+    echo -e "${RED}Error: yt-dlp is not installed.${NC}"
+    exit 1
+fi
+
+if ! command -v fzf &> /dev/null; then
+    echo -e "${RED}Error: fzf is not installed.${NC}"
+    exit 1
+fi
+
+if ! command -v ffmpeg &> /dev/null; then
+    echo -e "${YELLOW}[Warning] ffmpeg not found!${NC}"
+    echo "yt-dlp cannot merge video and audio streams without ffmpeg."
+    echo "You might get video without sound or sound without video."
+    read -p "Continue anyway? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
+URL="$1"
+if [ -z "$URL" ]; then
+    echo -e "${BLUE}[?] Paste YouTube URL:${NC}"
+    read -p "> " URL
+fi
+
+if [ -z "$URL" ]; then
+    echo "No URL provided. Exiting."
+    exit 0
+fi
+
+echo -e "${YELLOW}Fetching video info...${NC}"
+TITLE=$(yt-dlp --get-title --no-warnings "$URL")
+
+if [ -z "$TITLE" ]; then
+    echo -e "${RED}Could not get video info. Check URL or internet connection.${NC}"
+    exit 1
+fi
+
+echo -e "Video: ${BOLD}$TITLE${NC}"
+
+echo -e "${BLUE}[?] Select Quality:${NC}"
+
+OPTIONS="Best Available (Video+Audio)\n4K (2160p)\n1080p (FullHD)\n720p (HD)\n480p (SD)\nAudio Only (MP3 192k)\nAudio Only (M4A Best)"
+
+SELECTED=$(echo -e "$OPTIONS" | fzf --height 30% --layout=reverse --border --prompt="Download > ")
+
+if [ -z "$SELECTED" ]; then
+    echo "Aborted."
+    exit 0
+fi
+
+case "$SELECTED" in
+    *"Best Available"*)
+        ARGS="-f 'bv+ba/b'"
+        ;;
+    *"4K"*)
+        ARGS="-f 'bv[height<=2160]+ba/b[height<=2160]'"
+        ;;
+    *"1080p"*)
+        ARGS="-f 'bv[height<=1080]+ba/b[height<=1080]'"
+        ;;
+    *"720p"*)
+        ARGS="-f 'bv[height<=720]+ba/b[height<=720]'"
+        ;;
+    *"480p"*)
+        ARGS="-f 'bv[height<=480]+ba/b[height<=480]'"
+        ;;
+    *"Audio Only (MP3"*)
+        ARGS="-x --audio-format mp3 --audio-quality 192K"
+        ;;
+    *"Audio Only (M4A"*)
+        ARGS="-x --audio-format m4a"
+        ;;
+esac
+
+ARGS="$ARGS -o '%(title)s.%(ext)s'"
+
+CMD="yt-dlp $ARGS \"$URL\""
+
+echo -e "\n${BOLD}Starting download...${NC}"
+echo -e "${YELLOW}$CMD${NC}\n"
+
+eval "$CMD"
+
+echo -e "\n${GREEN}Download complete!${NC}"
