@@ -14,7 +14,7 @@ if ! command -v yt-dlp &> /dev/null; then
     echo -e "${YELLOW}To fix this, install it via your package manager:${NC}"
     echo -e "  Gentoo:   ${BOLD}sudo emerge -av net-misc/yt-dlp${NC}"
     echo -e "  Arch:     ${BOLD}sudo pacman -S yt-dlp${NC}"
-    echo -e "  Debian:   ${BOLD}sudo apt install yt-dlp${NC}"
+    echo -e "  Debian/Ubuntu:   ${BOLD}sudo apt install yt-dlp${NC}"
     echo -e "  Python:   ${BOLD}pip install yt-dlp${NC}"
     echo ""
     exit 1
