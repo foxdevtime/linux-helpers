@@ -1,3 +1,12 @@
+> [!WARNING]
+> **Compatibility Notice**
+>
+> This tool is developed and tested on **Gentoo Linux (KDE Plasma)**.
+>
+> Users on **Hyprland**, **Sway**, or other minimal Wayland compositors might face issues with **TUN Mode** (running GUI as root).
+> *   Root GUI apps on Wayland often require specific Polkit/Environment configurations (e.g., `xhost +SI:localuser:root`).
+> *   **Arch/Hyprland Users:** If `sudo nekoray` fails to open the window, it is highly recommended to install via **AUR** (`nekoray-bin`), as it handles permissions natively.
+
 # Nekoray Manager
 
 A helper script to install, update, and manage **Nekoray** (AppImage) on Linux systems.
