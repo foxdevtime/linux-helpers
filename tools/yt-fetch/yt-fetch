@@ -8,12 +8,25 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 if ! command -v yt-dlp &> /dev/null; then
-    echo -e "${RED}Error: yt-dlp is not installed.${NC}"
+    echo -e "${RED}[Error] Critical dependency 'yt-dlp' is missing!${NC}"
+    echo "This script is a wrapper around yt-dlp, but it is not installed."
+    echo ""
+    echo -e "${YELLOW}To fix this, install it via your package manager:${NC}"
+    echo -e "  Gentoo:   ${BOLD}sudo emerge -av net-misc/yt-dlp${NC}"
+    echo -e "  Arch:     ${BOLD}sudo pacman -S yt-dlp${NC}"
+    echo -e "  Debian:   ${BOLD}sudo apt install yt-dlp${NC}"
+    echo -e "  Python:   ${BOLD}pip install yt-dlp${NC}"
+    echo ""
     exit 1
 fi
 
 if ! command -v fzf &> /dev/null; then
-    echo -e "${RED}Error: fzf is not installed.${NC}"
+    echo -e "${RED}[Error] Dependency 'fzf' is missing!${NC}"
+    echo "This tool needs fzf to display the interactive menu."
+    echo ""
+    echo -e "${YELLOW}To fix this:${NC}"
+    echo -e "  Gentoo:   ${BOLD}sudo emerge -av app-shells/fzf${NC}"
+    echo -e "  Other:    ${BOLD}https://github.com/junegunn/fzf#installation${NC}"
     exit 1
 fi
 
